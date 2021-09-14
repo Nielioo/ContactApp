@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +20,9 @@ public class AddContactActivity extends AppCompatActivity {
     private TextInputLayout add_name_textInputLayout, add_age_textInputLayout, add_city_textInputLayout;
     private Button add_contact_button;
     private TextWatcher tmpWatcher;
+    private String action;
+    private User currentUser;
+    private int position;
     private Intent intent;
 
     @Override
@@ -27,7 +31,28 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
 
         initialize();
+        setUi();
         setListener();
+    }
+
+    private void setUi() {
+        if(action.equalsIgnoreCase("add")){
+            add_contact_toolbar.setTitle("Add Contact");
+            add_contact_button.setText("Add Contact");
+
+            setButton(false);
+
+        } else if (action.equalsIgnoreCase("edit")) {
+            add_contact_toolbar.setTitle("Edit Contact");
+            add_contact_button.setText("Edit Contact");
+
+            add_name_textInputLayout.getEditText().setText(currentUser.getName());
+            add_age_textInputLayout.getEditText().setText(currentUser.getAge());
+            add_city_textInputLayout.getEditText().setText(currentUser.getCity());
+
+            setButton(true);
+
+        }
     }
 
     private void setButton(boolean tmp) {
@@ -36,13 +61,25 @@ public class AddContactActivity extends AppCompatActivity {
     }
 
     private void setListener() {
-        add_contact_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(getBaseContext(), MainActivity.class);
-                finish();
-            }
-        });
+
+        if(action.equalsIgnoreCase("add")){
+            add_contact_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intent = new Intent(getBaseContext(), MainActivity.class);
+                    finish();
+                }
+            });
+        } else if(action.equalsIgnoreCase("edit")){
+            add_contact_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    intent = new Intent(getBaseContext(), ContactActivity.class);
+                    finish();
+                }
+            });
+        }
+
 
         tmpWatcher = new TextWatcher() {
             @Override
@@ -80,11 +117,25 @@ public class AddContactActivity extends AppCompatActivity {
                 String age = add_age_textInputLayout.getEditText().getText().toString().trim();
                 String city = add_city_textInputLayout.getEditText().getText().toString().trim();
 
-                User newUser = new User(name, age, city);
-                intent = new Intent();
-                intent.putExtra("newUser", newUser);
-                setResult(1, intent);
-                finish();
+                if(action.equalsIgnoreCase("add")){
+                    User newUser = new User(name, age, city);
+                    intent = new Intent();
+                    intent.putExtra("newUser", newUser);
+                    setResult(1, intent);
+                    finish();
+                } else if(action.equalsIgnoreCase("edit")){
+                    User updatedUser = new User(name, age, city);
+//                    currentUser.setName(name);
+//                    currentUser.setAge(age);
+//                    currentUser.setCity(city);
+                    intent = new Intent();
+                    intent.putExtra("updatedUser", updatedUser);
+                    intent.putExtra("position", position);
+                    setResult(2, intent);
+                    finish();
+                }
+
+
             }
         });
 
@@ -97,6 +148,9 @@ public class AddContactActivity extends AppCompatActivity {
         add_city_textInputLayout = findViewById(R.id.add_city_textInputLayout);
         add_contact_button = findViewById(R.id.add_contact_button);
 
-        setButton(false);
+        intent = getIntent();
+        action = intent.getStringExtra("action");
+        position = intent.getIntExtra("position",-1);
+        currentUser= intent.getParcelableExtra("currentUser");
     }
 }

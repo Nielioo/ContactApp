@@ -3,7 +3,6 @@ package com.snap.contact_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -56,8 +55,19 @@ public class MainActivity extends AppCompatActivity implements OnCardClickListen
                             adapter.notifyDataSetChanged();
 
                             setHint();
+                        } else if (result.getResultCode() == 2) {
+                            User updatedUser = result.getData().getParcelableExtra("updatedUser");
+                            int position = result.getData().getIntExtra("position",-1);
+                            userList.set(position, updatedUser);
+                            adapter.notifyDataSetChanged();
+
+                            setHint();
                         } else if (result.getResultCode() == 3) {
-//                          int position = Integer.parseInt(result.getData().getStringExtra("position"));
+                            int position = result.getData().getIntExtra("position", -1);
+                            userList.remove(position);
+                            adapter.notifyDataSetChanged();
+
+                            setHint();
                         }
 
                     }
@@ -69,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnCardClickListen
             @Override
             public void onClick(View v) {
                 intent = new Intent(getBaseContext(), AddContactActivity.class);
+                intent.putExtra("action", "add");
                 activityResultLauncher.launch(intent);
             }
         });
@@ -94,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnCardClickListen
         main_recyclerView = findViewById(R.id.main_recyclerView);
         main_fab = findViewById(R.id.main_fab);
         main_noContact_textView = findViewById(R.id.main_noContact_textView);
+        intent = getIntent();
         userList = new ArrayList<>();
         adapter = new ContactRVAdapter(userList, this);
     }
