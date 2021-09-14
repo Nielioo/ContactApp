@@ -4,11 +4,20 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_ei"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_ei_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Contact_App">
+        <activity
+            android:name=".EditContactActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AddContactActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ContactActivity"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
