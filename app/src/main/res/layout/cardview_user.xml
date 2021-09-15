@@ -59,6 +59,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="6dp"
                 android:text="Name Information"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/user_age_textView"
